@@ -1,0 +1,51 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#143d1e">
+<meta name="referrer" content="same-origin">
+<title>{% block title %}{{ site.site_name }}{% endblock %}</title>
+<link rel="icon" href="{% static 'img/logo.png' %}">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% url 'theme_css' %}?v={{ site.updated_at|date:'U' }}">
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="{% url 'home' %}">
+      <img src="{% static 'img/logo.png' %}" alt="DIMT logo" width="62" height="62">
+      <span><b>{{ site.site_name }}</b><small>Domasi Institute of Management and Technology</small></span>
+    </a>
+    {% if nav_open %}
+      {% if current_student %}
+        {% if nav_voted %}<a class="head-cta done" href="{% url 'results_for' nav_open.id %}">Voted &#10003;</a>
+        {% else %}<a class="head-cta" href="{% url 'ballot' nav_open.id %}">Vote now</a>{% endif %}
+      {% else %}<a class="head-cta" href="{% url 'login' %}?next={% url 'ballot' nav_open.id %}">Login to vote</a>{% endif %}
+    {% elif not current_student %}<a class="head-cta" href="{% url 'login' %}">Student login</a>{% endif %}
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span><span></span></button>
+    <nav id="main-nav" aria-label="Main">
+      {% if current_student %}<span class="nav-who">{{ current_student.full_name }} ({{ current_student.student_id }})</span>{% endif %}
+      <a href="{% url 'home' %}">Elections</a>
+      <a href="{% if nav_election %}{% url 'candidates_for' nav_election.id %}{% else %}{% url 'candidates' %}{% endif %}">Candidates &amp; programmes</a>
+      <a href="{% url 'results' %}">Live results</a>
+      <a href="{% url 'check' %}">Am I on the list?</a>
+      <a href="{% url 'login_help' %}">Login problem</a>
+      {% if current_student %}
+        <form method="post" action="{% url 'logout' %}" class="nav-form">{% csrf_token %}<button>Log out</button></form>
+      {% else %}
+        <a href="{% url 'login' %}">Student login</a>
+      {% endif %}
+    </nav>
+  </div>
+  {% if current_student %}<div class="who-bar"><div class="wrap">Logged in as <b>{{ current_student.full_name }}</b> ({{ current_student.student_id }})</div></div>{% endif %}
+</header>
+<main><div class="wrap">
+  {% if messages %}<ul class="msgs" role="status">{% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
+  {% block content %}{% endblock %}
+</div></main>
+<footer><div class="wrap">Centre for Great Success &mdash; DIMT Student Union Voting</div></footer>
+<script src="{% static 'js/menu.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

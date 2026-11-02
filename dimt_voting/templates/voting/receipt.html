@@ -1,0 +1,11 @@
+{% extends "voting/base.html" %}
+{% block title %}Vote recorded{% endblock %}
+{% block content %}
+<div class="panel notice">
+  <h1>Your vote has been recorded</h1>
+  <p>Thank you for voting in <b>{{ election.title }}</b>. Keep this reference code as proof that you voted. It does not reveal your choices.</p>
+  <p><span class="receipt-code">{{ record.receipt }}</span></p>
+  <p class="hint">Recorded {{ record.voted_at|date:"j M Y, H:i" }}</p>
+  <div class="actions center"><a class="btn" href="{% url 'results_for' election.id %}">View results</a></div>
+</div>
+{% endblock %}

@@ -1,3 +1,6 @@
 Django>=5.0
 Pillow>=10.0
 whitenoise>=6.6
+gunicorn
+psycopg2-binary
+dj-database-url

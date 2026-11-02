@@ -1,0 +1,6 @@
+{% extends "voting/base.html" %}
+{% block title %}Page not found{% endblock %}
+{% block content %}
+<div class="panel notice narrow"><h1>Page not found</h1><p>That page does not exist. Check the address or go back to the home page.</p>
+<div class="actions center"><a class="btn" href="{% url 'home' %}">Go to home page</a><a class="btn ghost" href="{% url 'login_help' %}">Report a problem</a></div></div>
+{% endblock %}

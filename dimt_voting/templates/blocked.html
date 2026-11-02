@@ -1,0 +1,14 @@
+{% extends "voting/base.html" %}
+{% block title %}Access blocked{% endblock %}
+{% block content %}
+<div class="panel notice narrow">
+  <h1>Access blocked</h1>
+  {% if reason == "trap" %}
+    <p>You tried to open a restricted page. This attempt has been recorded, and this device and any student account used on it are blocked from logging in and voting.</p>
+  {% else %}
+    <p>This device has been blocked from logging in and voting because of a security alert.</p>
+  {% endif %}
+  <p class="hint">If you believe this is a mistake, send your ID number to the election officers.</p>
+  <div class="actions center"><a class="btn gold" href="{% url 'login_help' %}">Report a problem</a><a class="btn ghost" href="{% url 'results' %}">View results</a></div>
+</div>
+{% endblock %}

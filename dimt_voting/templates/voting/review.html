@@ -1,0 +1,19 @@
+{% extends "voting/base.html" %}
+{% block title %}Confirm your vote{% endblock %}
+{% block content %}
+<h1>Confirm your vote</h1>
+<div class="callout">Once you confirm, your vote is final and cannot be changed.</div>
+<form method="post">{% csrf_token %}<input type="hidden" name="step" value="confirm">
+<div class="panel">
+{% for row in summary %}
+  <h3>{{ row.position.title }}</h3>
+  {% if row.picked %}<p>{% for c in row.picked %}<b>{{ c.name }}</b>{% if not forloop.last %}, {% endif %}<input type="hidden" name="pos_{{ row.position.id }}" value="{{ c.id }}">{% endfor %}</p>
+  {% else %}<p class="hint">Abstain</p>{% endif %}
+{% endfor %}
+</div>
+<div class="actions">
+  <button class="btn">Confirm and cast my vote</button>
+  <a class="btn ghost" href="{% url 'ballot' election.id %}">Go back and change</a>
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "voting/base.html" %}
+{% load static %}
+{% block title %}Live results - {{ site.site_name }}{% endblock %}
+{% block content %}
+{% if not election %}
+  <div class="panel notice"><h2>No elections yet</h2><p>Results will appear here once an election is created.</p></div>
+{% else %}
+<div id="app" data-api="{% url 'results_api' election.id %}">
+<section class="hero">
+  <h1 id="el-title">{{ election.title }}</h1>
+  <div class="meta">
+    <span class="badge" id="el-status">Loading…</span>
+    <span class="badge prov" id="el-prov" hidden>Provisional results</span>
+    <span id="countdown"></span>
+  </div>
+  {% if elections|length > 1 %}
+  <div class="switcher"><label class="sr" for="switch">Choose election</label>
+    <select id="switch" data-base="/results/">{% for e in elections %}<option value="{{ e.id }}" {% if e.id == election.id %}selected{% endif %}>{{ e.title }}</option>{% endfor %}</select></div>
+  {% endif %}
+  <p class="hero-link"><a href="{% url 'candidates_for' election.id %}">Read the candidates' programmes &rarr;</a></p>
+</section>
+
+<div id="notice" class="panel notice" hidden></div>
+
+<div id="stats" class="stats" hidden>
+  <div class="stat"><b id="s-eligible">–</b><span>Eligible students</span></div>
+  <div class="stat"><b id="s-voted">–</b><span>Votes cast</span></div>
+  <div class="stat"><b id="s-pct">–</b><span>Turnout</span></div>
+  <div class="stat"><b id="s-updated">–</b><span>Last updated</span></div>
+</div>
+
+<div id="turnout-panel" class="grid2" hidden>
+  <div class="panel"><h2>Turnout</h2><div class="chart-box"><canvas id="ch-turnout" role="img" aria-label="Turnout doughnut chart"></canvas></div></div>
+  <div class="panel"><h2>Turnout by department</h2><div class="chart-box"><canvas id="ch-branch" role="img" aria-label="Turnout by department bar chart"></canvas></div></div>
+</div>
+
+<div id="positions" hidden>
+  <h2>Results by position</h2>
+  <div class="pos-tabs" id="tabs" role="group" aria-label="Positions"></div>
+  <div id="pos-view"></div>
+</div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if election %}
+<script src="{% static 'js/chart.umd.js' %}"></script>
+<script src="{% static 'js/switcher.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endif %}
+{% endblock %}

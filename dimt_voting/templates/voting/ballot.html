@@ -1,0 +1,30 @@
+{% extends "voting/base.html" %}
+{% block title %}Ballot - {{ election.title }}{% endblock %}
+{% block content %}
+<h1>{{ election.title }}</h1>
+<p class="hint">Voting closes {{ election.end_time|date:"j M Y, H:i" }}. Tap <b>View programmes</b> under a candidate to read their plans. You will review your choices before the vote is final, and your choices are saved without your name.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="step" value="review">
+{% for p in positions %}
+  <fieldset class="pos">
+    <legend>{{ p.title }}</legend>
+    <p class="hint">{% if p.max_choices == 1 %}Choose one candidate.{% else %}Choose up to {{ p.max_choices }} candidates.{% endif %}</p>
+    {% for c in p.ballot_candidates %}
+      <div class="cand-wrap">
+        <label class="cand">
+          <input type="{% if p.max_choices == 1 %}radio{% else %}checkbox{% endif %}" name="pos_{{ p.id }}" value="{{ c.id }}">
+          {% if c.photo %}<img class="avatar" src="{{ c.photo.url }}" alt="">{% else %}<span class="avatar" aria-hidden="true">{{ c.name|slice:":1" }}</span>{% endif %}
+          <span class="grow"><b>{{ c.name }}</b>{% if c.department %} <span class="hint">({{ c.department }})</span>{% endif %}
+            {% if c.manifesto %}<p>{{ c.manifesto }}</p>{% endif %}</span>
+        </label>
+        {% with progs=c.programs.all %}{% if progs %}
+        <details class="progs"><summary>View programmes ({{ progs|length }})</summary>
+          <ol>{% for pr in progs %}<li><b>{{ pr.title }}</b>{% if pr.details %}<p>{{ pr.details|linebreaksbr }}</p>{% endif %}</li>{% endfor %}</ol>
+        </details>{% endif %}{% endwith %}
+      </div>
+    {% empty %}<p class="hint">No approved candidates for this position.</p>{% endfor %}
+    {% if p.allow_abstain %}<label class="cand"><input type="radio" name="pos_{{ p.id }}" value="" {% if p.max_choices == 1 %}checked{% endif %}><span class="grow"><b>Abstain</b><p>Skip this position.</p></span></label>{% endif %}
+  </fieldset>
+{% endfor %}
+<button class="btn gold block">Review my choices</button>
+</form>
+{% endblock %}

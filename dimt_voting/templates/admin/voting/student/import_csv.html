@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> &rsaquo; <a href="{% url 'admin:voting_student_changelist' %}">Students</a> &rsaquo; Upload list</div>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+<p>Upload a <b>.csv</b> file with these column headings in the first row:</p>
+<p><code>student_id, full_name, department, phone</code> &nbsp;(<code>department</code> and <code>phone</code> are optional; you may use <code>first_name, last_name</code> instead of <code>full_name</code>).</p>
+<p>Students already on the list are updated. Only students on this list can log in and vote.</p>
+
+{% if result %}
+<div style="padding:12px;background:#e4f3e8;border:1px solid #7bbf8e;border-radius:6px;margin:14px 0">
+  <b>Done.</b> Added {{ result.created }}, updated {{ result.updated }}, skipped {{ result.skipped }}.
+</div>
+{% if result.errors %}
+<div style="padding:12px;background:#fdf0e1;border:1px solid #e0b070;border-radius:6px;margin-bottom:14px">
+  <b>Please check these rows:</b>
+  <ul>{% for e in result.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  {% if result.more_errors %}<p>...and {{ result.more_errors }} more.</p>{% endif %}
+</div>{% endif %}
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Upload" class="default">
+</form>
+</div>
+{% endblock %}

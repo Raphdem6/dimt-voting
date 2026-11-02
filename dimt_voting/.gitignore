@@ -1,0 +1,9 @@
+
+# Local development files
+venv/
+db.sqlite3
+.secret_key
+.env
+__pycache__/
+*.pyc
+staticfiles/
